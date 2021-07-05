@@ -1,0 +1,71 @@
+{
+  "manifest_version": 3,
+  "name": "BVGO Overlay",
+  "description": "Overlay to trigger BVGO keyboard shortcut",
+  "version": "0.1.0",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://localhost/*",
+        "http://127.0.0.1/*",
+        "https://*.beenverified.com/*",
+        "https://*.bumper.com/*",
+        "https://*.ownerly.com/*",
+        "https://*.neighborwho.com/*",
+        "https://*.numberguru.com/*",
+        "https://*.peoplelooker.com/*",
+        "https://*.peoplesmart.com/*"
+      ],
+      "js": [        
+        "./pages/content/bvgo-overlay-init.js"
+      ],
+      "css": ["./pages/content/bvgo-overlay.css"]
+    }
+  ],
+  "options_page": "./pages/options/options.html",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "web_accessible_resources": [
+    {
+
+      "resources": [
+        "pages/content/BVGO.js",
+        "pages/content/bvgo-overlay-script.js"
+      ],
+      "matches": [
+        "http://localhost/*",
+        "http://127.0.0.1/*",
+        "https://*.beenverified.com/*",
+        "https://*.bumper.com/*",
+        "https://*.ownerly.com/*",
+        "https://*.neighborwho.com/*",
+        "https://*.numberguru.com/*",
+        "https://*.peoplelooker.com/*",
+        "https://*.peoplesmart.com/*"
+      ]
+    }
+  ],
+  "externally_connectable": {
+    "matches": [
+      "http://localhost/*",
+      "http://127.0.0.1/*",
+      "https://*.beenverified.com/*",
+      "https://*.bumper.com/*",
+      "https://*.ownerly.com/*",
+      "https://*.neighborwho.com/*",
+      "https://*.numberguru.com/*",
+      "https://*.peoplelooker.com/*",
+      "https://*.peoplesmart.com/*"
+    ]
+  }
+}

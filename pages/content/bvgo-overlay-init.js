@@ -21,13 +21,3 @@ console.log('bvgo-inject.js...');
 
   document.body.append(scriptElement);
 });
-
-chrome.runtime.onMessage.addListener(({type}) => {
-  if (type === 'bvgo-app-wizard-ready') {
-    console.log('bvgo-app-wizard-ready event received from background page');
-
-    // forward message from background to injected BVGO class
-    // which will initiate adding wizard steps to overlay
-    window.postMessage({type: 'bvgo-app-wizard-ready'});
-  }
-});

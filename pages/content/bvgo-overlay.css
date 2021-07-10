@@ -5,6 +5,7 @@
   --primary-text-color: #c9ffd1;
   --primary-text-color-faded: #c9ffd1bd;
   --primary-link-hover: #8ef89e;
+  --primary-link-inactive: #a6b6b1;
 }
 
 .bvgo-overlay-container,
@@ -111,6 +112,11 @@
   background-color: var(--primary-light-transparent);
 }
 
+.bvgo-overlay-wizard-step.completed {
+  color: var(--primary-link-inactive);
+  cursor: default;
+}
+
 .bvgo-overlay-wizard-step-title {
   flex-grow: 1;
 }
@@ -126,6 +132,10 @@
 .bvgo-overlay-wizard-step-modal.active {
   background-color: var(--primary-link-hover);
   animation: fade 2s infinite;
+}
+
+.bvgo-overlay-wizard-step-modal.completed {
+  background-color: var(--primary-link-inactive);
 }
 
 @keyframes fade {

@@ -1,6 +1,6 @@
 class BVGO {
   static isBRP() {
-    return document.querySelector('.wizContent');
+    return document.querySelector('.wizContent, .wiz-content');
   }
 
   static triggerBVGO() {
@@ -19,7 +19,8 @@ class BVGO {
     this.pageType = pageType;
     this.containerMouseFades = containerMouseFades;
     this.collapsedByDefault = collapsedByDefault;
-
+    this.stepsToSkip = 0;
+    this.currentWizardStepIndex = 0;
     this.isCollapsed = this.collapsedByDefault;
 
     this.build();
@@ -29,15 +30,57 @@ class BVGO {
     this.registerWizardReadyListener();
   }
 
+  get areStepsBeingSkipped() {
+    return this.stepsToSkip > 0;
+  }  
+
+  skipToStep(stepIndex) {
+    stepIndex *= 1;
+
+    const isFutureStep = stepIndex > this.currentWizardStepIndex;
+    const isCurrentStep = stepIndex === this.currentWizardStepIndex;
+    const isCurrentStepModalDisplayed = this.currentWizardStep.isModalDispled;
+
+    if(!this.areStepsBeingSkipped && ((isFutureStep) || (isCurrentStep && this.currentWizardStep.$modal && !isCurrentStepModalDisplayed))) {
+      this.stepsToSkip = this.getStepsToSkip(stepIndex);
+      this.skipStep();
+    }
+  }
+
+  skipStep() {
+    setTimeout(() => {
+      this.stepsToSkip--;
+      BVGO.triggerBVGO();
+    });
+  }
+
+  getStepsToSkip(stepIndex) {
+    let stepsToSkip = 0;
+
+    if(stepIndex === this.currentWizardStepIndex && !this.currentWizardStep.isModalDispled) {
+      stepsToSkip++;
+    } else {
+      for(let i = this.currentWizardStepIndex; i < stepIndex; i++) {
+        const step = this.wizardSteps[i];
+  
+        stepsToSkip += step.$modal && !step.isModalDispled ? 2 : 1;
+      }
+    }
+    console.log('stepsToSkip:', stepsToSkip);
+    return stepsToSkip;
+  }
+
   onStartNextWizardStep(section, startNextStepOrig) {
     const currentStep = section.getCurrentStep();
-
-    this.currentWizardStep = currentStep;
     
     startNextStepOrig.call(section);
 
+    
     if(!currentStep.hide) {
       console.log(currentStep.title, currentStep);
+      
+      this.currentWizardStep = currentStep;
+      this.currentWizardStepIndex++;
 
       const bvgoTitleDataset = 'data-bvgo-overlay-step-title';
       const bvgoStepClass = '.bvgo-overlay-wizard-step';
@@ -45,7 +88,18 @@ class BVGO {
       const bvgoStepElement = document.querySelector(`[${bvgoTitleDataset}="${currentStep.title}"]`);
       const bvgoActiveStepElement = document.querySelector(`${bvgoStepClass}.active`);
 
+      const onModalShown = () => {
+        document.querySelector(`[${bvgoTitleDataset}="${currentStep.title}"] ${bvgoModalClass}`)?.classList.add('active');
+
+        currentStep.$modal.off('show.bs.modal', onModalShown);
+
+        if(this.areStepsBeingSkipped) {
+          this.skipStep();
+        }
+      };
+
       bvgoActiveStepElement?.classList.remove('active');
+      bvgoActiveStepElement?.classList.add('completed');
       
       bvgoStepElement?.classList.add('active');
 
@@ -53,43 +107,45 @@ class BVGO {
         currentStep.$modal.on('show.bs.modal', onModalShown);
       }
 
-      function onModalShown() {
-        document.querySelector(`[${bvgoTitleDataset}="${currentStep.title}"] ${bvgoModalClass}`)?.classList.add('active');
-
-        currentStep.$modal.off('show.bs.modal', onModalShown);
-      }
-
+      document.querySelector(`${bvgoModalClass}.active`)?.classList.add('completed');
       document.querySelector(`${bvgoModalClass}.active`)?.classList.remove('active');
+
+      if(this.areStepsBeingSkipped) {
+        this.skipStep();
+      }
     }
   }
 
   registerWizardReadyListener() {
     window.addEventListener('message', e => {
       if(e.data.type === 'bvgo-app-wizard-ready') {
-        console.log('wizard ready:', window.bvgoWizardManager);
-
         this.wizard = window.bvgoWizardManager;
 
-        // intercept section startNextStep so extension can perform logic when each step starts
-        this.wizard.sections.forEach(section => {
-          section.startNextStep = this.onStartNextWizardStep.bind(this, section, section.startNextStep);
-        });
-
-        this.generateWizardSteps(window.bvgoWizardManager);
+        this.generateWizardSteps();
       }
     });
   }
 
-  generateWizardSteps(wizard) {
+  generateWizardSteps() {
     console.log('Generating wizard steps...');
 
-    if(wizard?.sections?.length) {
-      wizard.sections.reduce((acc, curr) => {
-        acc.push(...curr.steps);
-        return acc;
-      }, [])
-      .filter(step => !step.hide)
-      .forEach(({$modal, duration, title}, index) => {
+    if(this.wizard?.sections?.length) {
+      // default currentWizardStep to first section's first step
+      this.currentWizardStep = this.wizard.sections[0]?.steps[0];
+
+      // flatten wizard steps
+      this.wizardSteps = this.wizard.sections
+        .reduce((acc, section) => {
+          // intercept section startNextStep methods so extension can perform logic when each step starts
+          section.startNextStep = this.onStartNextWizardStep.bind(this, section, section.startNextStep);
+          
+          acc.push(...section.steps);
+          
+          return acc;
+        }, [])
+        .filter(step => !step.hide);
+
+      this.wizardSteps.forEach(({$modal, duration, title}, index) => {
         const stepElement = document.createElement('div');
         const titleElement = document.createElement('div');
         const modalElement = document.createElement('div');
@@ -98,6 +154,14 @@ class BVGO {
         stepElement.setAttribute('data-bvgo-overlay-step-index', index);
         stepElement.setAttribute('data-bvgo-overlay-step-title', title);
         stepElement.title = `Duration: ${duration}`;
+
+        if(!index) {
+          stepElement.classList.add('active');
+        }
+
+        stepElement.addEventListener('click', e => {
+          this.skipToStep(e.currentTarget.dataset.bvgoOverlayStepIndex);
+        });
 
         titleElement.classList.add('bvgo-overlay-wizard-step-title');
         titleElement.innerHTML = title;
@@ -117,6 +181,7 @@ class BVGO {
   }
 
   addListeners() {
+    this.onDragMouseDownHandler = this.onDragMouseDownHandler.bind(this);
     this.onDragMouseMoveHandler = this.onDragMouseMoveHandler.bind(this);
     this.onDragMouseUpHandler = this.onDragMouseUpHandler.bind(this);
     this.toggleContainer = this.toggleContainer.bind(this);
@@ -126,15 +191,7 @@ class BVGO {
       this.container.addEventListener('mouseout', () => this.container.classList.add('inactive'));
     }
 
-    this.titlebar.addEventListener('mousedown', e => {
-      this.dragStartX = e.clientX;
-      this.dragStartY = e.clientY;
-      this.dragStartOffsetLeft = this.container.offsetLeft;
-      this.dragStartOffsetTop = this.container.offsetTop;
-
-      document.addEventListener('mousemove', this.onDragMouseMoveHandler);
-      document.addEventListener('mouseup', this.onDragMouseUpHandler);
-    });
+    this.attachMouseOrTouchListener(this.titlebar, 'add', 'mousedown', this.onDragMouseDownHandler);
 
     this.containerToggleBtn.addEventListener('click', this.toggleContainer);
 
@@ -147,9 +204,29 @@ class BVGO {
     this.title.addEventListener('click', BVGO.triggerBVGO);
   }
 
+  getEventXYPosition(e) {
+    return {
+      clientX: e.touches ? e.touches[0].clientX : e.clientX,
+      clientY: e.touches ? e.touches[0].clientY : e.clientY,
+    };
+  }
+
+  onDragMouseDownHandler(e) {
+    const { clientX, clientY } = this.getEventXYPosition(e);
+
+    this.dragStartX = clientX;
+    this.dragStartY = clientY;
+    this.dragStartOffsetLeft = this.container.offsetLeft;
+    this.dragStartOffsetTop = this.container.offsetTop;
+
+    this.attachMouseOrTouchListener(document, 'add', 'mousemove', this.onDragMouseMoveHandler, { passive: false });
+    this.attachMouseOrTouchListener(document, 'add', 'mouseup', this.onDragMouseUpHandler);
+  }
+
   onDragMouseMoveHandler(e) {
-    const x = e.clientX - this.dragStartX;
-    const y = e.clientY - this.dragStartY;
+    const { clientX, clientY } = this.getEventXYPosition(e);
+    const x = clientX - this.dragStartX;
+    const y = clientY - this.dragStartY;
     
     this.container.style.left = (this.dragStartOffsetLeft + x) + 'px';
     this.container.style.top = (this.dragStartOffsetTop + y) + 'px';
@@ -157,9 +234,23 @@ class BVGO {
     e.preventDefault();
   }
 
+  attachMouseOrTouchListener(elem, addOrRemove, eventType, handler, options) {
+    const eventTypeMapping = {
+      mouseup: 'touchend',
+      mousemove: 'touchmove',
+      mousedown: 'touchstart',
+    };
+
+    if('ontouchstart' in window) {
+      eventType = eventTypeMapping[eventType];
+    }
+
+    elem[`${addOrRemove}EventListener`](eventType, handler, options);
+  }
+
   onDragMouseUpHandler() {
-    document.removeEventListener('mousemove', this.onDragMouseMoveHandler);
-    document.removeEventListener('mouseup', this.onDragMouseUpHandler);
+    this.attachMouseOrTouchListener(document, 'remove', 'mousemove', this.onDragMouseMoveHandler);
+    this.attachMouseOrTouchListener(document, 'remove', 'mouseup', this.onDragMouseUpHandler);
   }
 
   toggleContainer() {

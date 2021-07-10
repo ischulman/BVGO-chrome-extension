@@ -1,7 +1,9 @@
 console.log('bvgo-overlay-script');
 
+let BVGOOverlay;
+
 if (BVGO.isBRP()) {
-  const BVGOOverlay = new BVGO({
+  BVGOOverlay = new BVGO({
     pageType: 'BRP',
     collapsedByDefault: false,
     containerMouseFades: false

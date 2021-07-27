@@ -6,6 +6,7 @@
   --primary-text-color-faded: #c9ffd1bd;
   --primary-link-hover: #8ef89e;
   --primary-link-inactive: #a6b6b1;
+  --section-border-color: #ffffffad;
 }
 
 .bvgo-overlay-container,
@@ -104,6 +105,10 @@
   color: var(--primary-text-color-faded);
   font-weight: bold;
   border-bottom: 1px solid var(--primary-dark);
+}
+
+.bvgo-overlay-wizard-step.is-last-section-step:not(:last-child) {
+  border-bottom-color: var(--section-border-color);
 }
 
 .bvgo-overlay-wizard-step:hover,

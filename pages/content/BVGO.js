@@ -212,7 +212,7 @@ class BVGO {
    * and is execited on timeout which seems to be necessary for all
    * steps to trigger.
    */
-   skipStep() {
+  skipStep() {
     setTimeout(() => {
       this.stepsToSkip--;
       BVGO.triggerBVGO();
@@ -300,25 +300,25 @@ class BVGO {
           // intercept section startNextStep methods so extension can perform logic when each step starts
           section.startNextStep = this.onStartNextWizardStep.bind(this, section, section.startNextStep);
           
+          section.steps[section.steps.length - 1].isLastSectionStep = true;
+
           acc.push(...section.steps);
           
           return acc;
         }, [])
         .filter(step => !step.hide);
 
-      this.wizardSteps.forEach(({$modal, duration, title}, index) => {
+      this.wizardSteps.forEach(({$modal, duration, title, isLastSectionStep}, index) => {
         const stepElement = document.createElement('div');
         const titleElement = document.createElement('div');
         const modalElement = document.createElement('div');
 
         stepElement.classList.add('bvgo-overlay-wizard-step');
+        stepElement.classList.toggle('is-last-section-step', !!isLastSectionStep);
+        stepElement.classList.toggle('active', index === 0);
         stepElement.setAttribute('data-bvgo-overlay-step-index', index);
         stepElement.setAttribute('data-bvgo-overlay-step-title', title);
         stepElement.title = `Duration: ${duration}`;
-
-        if(!index) {
-          stepElement.classList.add('active');
-        }
 
         stepElement.addEventListener('click', e => {
           this.skipToStep(e.currentTarget.dataset.bvgoOverlayStepIndex);
@@ -365,10 +365,7 @@ class BVGO {
     this.container.classList.add('bvgo-overlay-container');
 
     this.container.classList.add(this.collapsedByDefault ? 'collapsed' : 'expanded');
-    
-    if(this.containerMouseFades) {
-      this.container.classList.add('inactive');
-    }
+    this.container.classList.toggle('inactive', this.containerMouseFades);
 
     this.titlebar = document.createElement('div');
     this.titlebar.classList.add('bvgo-overlay-titlebar');

@@ -21,7 +21,7 @@
   min-height: 35px;
   min-width: 150px;
   overflow: hidden;
-  position: absolute;
+  position: fixed;
   right: 10px;
   top: 10px;
   transition: opacity 600ms;

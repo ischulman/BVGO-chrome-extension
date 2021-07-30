@@ -22,7 +22,8 @@
       "js": [        
         "./pages/content/bvgo-overlay-init.js"
       ],
-      "css": ["./pages/content/bvgo-overlay.css"]
+      "css": ["./pages/content/bvgo-overlay.css"],
+      "all_frames": true
     }
   ],
   "action": {

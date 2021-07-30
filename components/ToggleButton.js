@@ -6,7 +6,7 @@ class ToggleButton extends OptionItemControl {
 
     this.innerHTML = `
       <div class="track">
-        <div class="indicator"></div>
+        <div class="thumb"></div>
       </div>
     `;
   }

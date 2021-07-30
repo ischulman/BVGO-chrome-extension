@@ -5,10 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="options.css">
   <link rel="stylesheet" href="../../components/ToggleButton.css">
+  <link rel="stylesheet" href="../../components/Slider.css">
   <link rel="stylesheet" href="../../components/OptionItem.css">
   <script src="../../components/OptionItemControl.js" defer></script>
   <script src="../../components/ToggleButton.js" defer></script>
+  <script src="../../components/Slider.js" defer></script>
   <script src="../../components/OptionItem.js" defer></script>
+  <script src="../../default-options.js"></script>
   <script src="options.js" defer></script>
 </head>
 <body>
@@ -16,6 +19,7 @@
   <div class="options">
     <option-item name="Enabled" type="toggle" storage-key="enabled"></option-item>
     <option-item name="Collapsed by default" type="toggle" storage-key="collapsedByDefault"></option-item>
+    <option-item name="Container opacity" type="slider" storage-key="containerOpacity"></option-item>
   </div>
 </body>
 </html>

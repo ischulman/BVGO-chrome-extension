@@ -12,9 +12,6 @@ class BVGO {
   }
 
   constructor(options) {
-    this._collapsedByDefault = false;
-    this._enabled = true;
-
     this.stepsToSkip = 0;
     this.currentWizardStepIndex = 0;
 
@@ -26,7 +23,7 @@ class BVGO {
     // object on the window.
     window.postMessage({type: 'bvgo-extension-ready'});
     
-    this.setOptions(options);
+    Object.assign(this, defaultOptions, options);
 
     this.initialized = true;
   }
@@ -59,6 +56,19 @@ class BVGO {
     if(!this.initialized && this.collapsedByDefault) {
       this.collapse();
     }
+  }
+
+  get containerOpacity() {
+    return this._containerOpacity;
+  }
+
+  set containerOpacity(opacity) {
+    // containerOpacity option is stored as a number between 0 and 100
+    // which is used to set the input range on the options popup. 
+    // divide by 100 to get proper opacity value.
+    this._containerOpacity = opacity / 100;
+
+    this.container.style.opacity = this.containerOpacity;
   }
 
   get enabled() {

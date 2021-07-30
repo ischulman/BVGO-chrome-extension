@@ -13,12 +13,15 @@ class OptionItem extends HTMLElement {
   }
 
   connectedCallback() {
+    let control;
+
     switch(this.type) {
-      case 'toggle':
-        this.control = new ToggleButton({ storageKey: this.storageKey });
-        break;
+      case 'toggle': control = ToggleButton; break;
+      case 'slider': control = Slider; break;
     }
     
+    this.control = new control({ storageKey: this.storageKey });
+
     this.append(this.control);
   }
 }

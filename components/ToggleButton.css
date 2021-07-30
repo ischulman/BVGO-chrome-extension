@@ -1,8 +1,8 @@
 :root {
   --toggle-button-enabled-track-color: #90dfe9c7;
   --toggle-button-disabled-track-color: #c6eff4bf;
-  --toggle-button-enabled-indicator-color: #90dfe9;
-  --toggle-button-disabled-indicator-color: #c6eff4;
+  --toggle-button-enabled-thumb-color: #90dfe9;
+  --toggle-button-disabled-thumb-color: #c6eff4;
 }
 
 toggle-button {
@@ -25,17 +25,17 @@ toggle-button.enabled .track {
   background-color: var(--toggle-button-enabled-track-color);
 }
 
-toggle-button .indicator {
+toggle-button .thumb {
   width: 16px;
   height: 16px;
-  background-color: var(--toggle-button-disabled-indicator-color);
+  background-color: var(--toggle-button-disabled-thumb-color);
   border-radius: 50%;
   transition: left .3s ease-in-out, color 1s;
   position: absolute;
   left: 0;
 }
 
-toggle-button.enabled .indicator {
+toggle-button.enabled .thumb {
   left: 20px;
-  background-color: var(--toggle-button-enabled-indicator-color);
+  background-color: var(--toggle-button-enabled-thumb-color);
 }

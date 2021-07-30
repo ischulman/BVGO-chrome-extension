@@ -42,6 +42,7 @@
     {
 
       "resources": [
+        "default-options.js",
         "pages/content/BVGO.js",
         "pages/content/bvgo-overlay-script.js"
       ],

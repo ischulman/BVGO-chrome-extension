@@ -23,6 +23,7 @@ chrome.storage.onChanged.addListener(updates => {
 
 function loadExtensionScripts() {
   [
+    'default-options.js',
     'pages/content/BVGO.js',
     'pages/content/bvgo-overlay-script.js'
   ].forEach((path, index, scripts) => {

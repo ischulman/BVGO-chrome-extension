@@ -1,7 +1,7 @@
 :root {
   --primary-dark: #404445;
   --primary-light: #474f4f;
-  --primary-light-transparent: #4a3b8fd6;
+  --primary-bg: #4a3b8f;
   --primary-text-color: #c9ffd1;
   --primary-text-color-faded: #c9ffd1bd;
   --primary-link-hover: #8ef89e;
@@ -27,8 +27,7 @@
   top: 10px;
   transition: opacity 600ms;
   z-index: 1000000;
-
-  background-color: var(--primary-light-transparent);
+  background-color: var(--primary-bg);
   color: var(--primary-text-color);
   border: 1px solid var(--primary-dark);
   border-radius: 5px 5px 0 0;
@@ -113,7 +112,7 @@
 .bvgo-overlay-wizard-step:hover,
 .bvgo-overlay-wizard-step.active {  
   color: var(--primary-link-hover);
-  background-color: var(--primary-light-transparent);
+  background-color: var(--primary-bg);
 }
 
 .bvgo-overlay-wizard-step.completed {

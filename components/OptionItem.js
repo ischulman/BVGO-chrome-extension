@@ -8,7 +8,7 @@ class OptionItem extends HTMLElement {
     this.storageKey = this.getAttribute('storage-key');
 
     this.innerHTML = `
-      <div class="option-name">${this.getAttribute('name')}</div>
+      <div class="option-name">${this.name}</div>
     `;
   }
 

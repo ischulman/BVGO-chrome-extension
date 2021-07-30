@@ -336,8 +336,7 @@ class BVGO {
     console.log('Generating wizard steps...');
 
     if(this.wizard?.sections?.length) {
-      // default currentWizardStep to first section's first step
-      this.currentWizardStep = this.wizard.sections[0]?.steps[0];
+      this.currentWizardStep = this.wizard.getCurrentSection().getCurrentStep();
 
       // flatten wizard steps
       this.wizardSteps = this.wizard.sections
@@ -360,7 +359,7 @@ class BVGO {
 
         stepElement.classList.add('bvgo-overlay-wizard-step');
         stepElement.classList.toggle('is-last-section-step', !!isLastSectionStep);
-        stepElement.classList.toggle('active', index === 0);
+        stepElement.classList.toggle('active', this.wizardSteps[index] === this.currentWizardStep);
         stepElement.setAttribute('data-bvgo-overlay-step-index', index);
         stepElement.setAttribute('data-bvgo-overlay-step-title', title);
         stepElement.title = `Duration: ${duration}`;

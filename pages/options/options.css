@@ -1,0 +1,25 @@
+:root {
+  --options-main-color: #90dfe9;
+  --options-main-bg: #2c3644; 
+  --options-border-color: #4a627794;
+  --options-header-bg: #4a627794;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  color: var(--options-main-color);
+  background-color: var(--options-main-bg);
+  border: 2px solid var(--options-border-color);
+  font-size: 18px;
+  width: 450px;
+}
+
+header {
+  padding: 10px;
+  background-color: var(--options-header-bg);
+}

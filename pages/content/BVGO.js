@@ -11,30 +11,64 @@ class BVGO {
     });
   }
 
-  constructor({
-    pageType,
-    containerMouseFades = false,
-    collapsedByDefault = false
-  } = {}) {
-    this.pageType = pageType;
-    this.containerMouseFades = containerMouseFades;
-    this.collapsedByDefault = collapsedByDefault;
+  constructor(options) {
+    this._collapsedByDefault = false;
+    this._enabled = true;
+
     this.stepsToSkip = 0;
     this.currentWizardStepIndex = 0;
-    this.isCollapsed = this.collapsedByDefault;
 
     this.build();
-
     this.addListeners();
 
-    this.registerWizardReadyListener();
+    // post a message indicating the extension is ready. the page
+    // code expects to receive this event to add the wizard 
+    // object on the window.
+    window.postMessage({type: 'bvgo-extension-ready'});
+    
+    this.setOptions(options);
+
+    this.initialized = true;
   }
 
   /**
-   * Getter to determine whether steps are currently being skipped
+   * Set chrome.storage options initially or when they are updated.
+   * The expectation is that each option storage key corresponds to a 
+   * setter property on this class which handles the setting.
    */
+  setOptions(options) {
+    Object.entries(options).forEach(([option, optionValue]) => {
+      // when an option is updated, optionValue will be an object
+      // containing a newValue property whereas when requesting
+      // option values directly, optionValue is the value itself
+      this[option] = optionValue?.newValue ?? optionValue;
+    });
+  }
+
   get areStepsBeingSkipped() {
     return this.stepsToSkip > 0;
+  }
+
+  get collapsedByDefault() {
+    return this._collapsedByDefault;
+  }
+
+  set collapsedByDefault(collapsedByDefault) {
+    this._collapsedByDefault = collapsedByDefault;
+
+    if(!this.initialized && this.collapsedByDefault) {
+      this.collapse();
+    }
+  }
+
+  get enabled() {
+    return this._enabled;
+  }
+
+  set enabled(enabled) {
+    this._enabled = enabled;
+
+    this.container.classList.toggle('hidden', !this.enabled);
   }
 
   /**
@@ -62,18 +96,19 @@ class BVGO {
     });
 
     this.title.addEventListener('click', BVGO.triggerBVGO);
-  }
 
-  /**
-   * Add listener which waits for a message from the app code indication
-   * that the initialized wizard object has been added to the window
-   */
-  registerWizardReadyListener() {
     window.addEventListener('message', e => {
-      if(e.data.type === 'bvgo-app-wizard-ready') {
-        this.wizard = window.bvgoWizardManager;
+      switch(e.data.type) {
+        // message posted by the page app code which indicates 
+        // that the wizard instance is added to the window
+        case 'bvgo-app-wizard-ready':
+          this.wizard = window.bvgoWizardManager;
 
-        this.generateWizardSteps();
+          this.generateWizardSteps();
+          break;
+        case 'bvgo-extension-options-updated':
+          this.setOptions(e.data.updates);
+          break;
       }
     });
   }
@@ -209,7 +244,7 @@ class BVGO {
   /**
    * Skip a step in the wizard. Called when a step is directly clicked on.
    * In addition to triggering BVGO, this method decrements stepsToSKip
-   * and is execited on timeout which seems to be necessary for all
+   * and is executed on timeout which seems to be necessary for all
    * steps to trigger.
    */
   skipStep() {
@@ -223,7 +258,7 @@ class BVGO {
    * Method which intercepts each wizard section's startNextStep method.
    * The section and saved startNextStep method is passed in and
    * called so that wizard functionality doesn't break, but 
-   * allows for performingadditional logic exactly 
+   * allows for performing additional logic exactly 
    * when each step starts.
    * 
    * @param {object} section The section which this method is intercepting
@@ -346,15 +381,19 @@ class BVGO {
    * would contain the wizards steps.
    */
   toggleContainer() {
-    this.isCollapsed = !this.isCollapsed;
+    this.isCollapsed ? this.expand() : this.collapse();
+  }
 
-    if(this.isCollapsed) {
-      this.container.classList.remove('expanded');
-      this.container.classList.add('collapsed');
-    } else {
-      this.container.classList.remove('collapsed');
-      this.container.classList.add('expanded');
-    }
+  collapse() {
+    this.container.classList.remove('expanded');
+    this.container.classList.add('collapsed');
+    this.isCollapsed = true;
+  }
+
+  expand() {
+    this.container.classList.remove('collapsed');
+    this.container.classList.add('expanded');
+    this.isCollapsed = false;
   }
 
   /**
@@ -364,8 +403,8 @@ class BVGO {
     this.container = document.createElement('div');
     this.container.classList.add('bvgo-overlay-container');
 
-    this.container.classList.add(this.collapsedByDefault ? 'collapsed' : 'expanded');
-    this.container.classList.toggle('inactive', this.containerMouseFades);
+    this.container.classList.add('expanded');
+    this.container.classList.toggle('inactive', !!this.containerMouseFades);
 
     this.titlebar = document.createElement('div');
     this.titlebar.classList.add('bvgo-overlay-titlebar');

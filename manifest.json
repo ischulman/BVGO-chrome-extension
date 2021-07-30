@@ -25,7 +25,9 @@
       "css": ["./pages/content/bvgo-overlay.css"]
     }
   ],
-  "options_page": "./pages/options/options.html",
+  "action": {
+    "default_popup": "./pages/options/options.html"
+  },
   "permissions": [
     "activeTab",
     "tabs",

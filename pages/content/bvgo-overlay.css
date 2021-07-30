@@ -6,7 +6,7 @@
   --primary-text-color-faded: #c9ffd1bd;
   --primary-link-hover: #8ef89e;
   --primary-link-inactive: #a6b6b1;
-  --section-border-color: #ffffffad;
+  --section-border-color: #ffffff7a;
 }
 
 .bvgo-overlay-container,
@@ -26,7 +26,6 @@
   right: 10px;
   top: 10px;
   transition: opacity 600ms;
-  user-select: none;
   z-index: 1000000;
 
   background-color: var(--primary-light-transparent);

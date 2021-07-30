@@ -1,11 +1,9 @@
-console.log('bvgo-overlay-script');
-
 let BVGOOverlay;
 
-if (BVGO.isBRP()) {
-  BVGOOverlay = new BVGO({
-    pageType: 'BRP',
-    collapsedByDefault: false,
-    containerMouseFades: false
-  });
-}
+window.addEventListener('message', e => {
+  if(e.data.type === 'bvgo-extension-options') {
+    if (typeof BVGO !== 'undefined' && BVGO.isBRP()) {
+      BVGOOverlay = new BVGO(e.data.options);
+    }
+  }
+});

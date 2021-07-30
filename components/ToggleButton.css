@@ -1,0 +1,41 @@
+:root {
+  --toggle-button-enabled-track-color: #90dfe9c7;
+  --toggle-button-disabled-track-color: #c6eff4bf;
+  --toggle-button-enabled-indicator-color: #90dfe9;
+  --toggle-button-disabled-indicator-color: #c6eff4;
+}
+
+toggle-button {
+  width: 35px;
+  height: 8px;
+  cursor: pointer;
+}
+
+toggle-button .track {
+  background-color: var(--toggle-button-disabled-track-color);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 100%;
+  transition: background-color 1s;
+}
+
+toggle-button.enabled .track {
+  background-color: var(--toggle-button-enabled-track-color);
+}
+
+toggle-button .indicator {
+  width: 16px;
+  height: 16px;
+  background-color: var(--toggle-button-disabled-indicator-color);
+  border-radius: 50%;
+  transition: left .3s ease-in-out, color 1s;
+  position: absolute;
+  left: 0;
+}
+
+toggle-button.enabled .indicator {
+  left: 20px;
+  background-color: var(--toggle-button-enabled-indicator-color);
+}

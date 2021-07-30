@@ -1,0 +1,15 @@
+:root {
+  --option-item-border-color: #90dfe9a6;
+}
+
+option-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  color: var(--options-main-color);
+}
+
+option-item ~ option-item {
+  border-top: 1px solid var(--option-item-border-color);
+}

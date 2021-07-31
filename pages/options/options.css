@@ -23,3 +23,8 @@ header {
   padding: 10px;
   background-color: var(--options-header-bg);
 }
+
+.bvgo-link:hover {
+  cursor: pointer;
+  filter: brightness(1.1);
+}

@@ -1,9 +1,21 @@
 let BVGOOverlay;
 
 window.addEventListener('message', e => {
-  if(e.data.type === 'bvgo-extension-options') {
-    if (typeof BVGO !== 'undefined' && BVGO.isBRP()) {
-      BVGOOverlay = new BVGO(e.data.options);
+  const bvgoLoaded = typeof BVGO !== 'undefined';
+  const {
+    type,
+    options,
+  } = e.data;
+
+  if(type === 'bvgo-extension-options') {
+    if(bvgoLoaded && BVGO.isBRP()) {
+      BVGOOverlay = new BVGO(options);
+    }
+  }
+
+  if(type === 'bvgo-extension-trigger-bvgo') {
+    if(bvgoLoaded) {
+      BVGO.triggerBVGO();
     }
   }
 });

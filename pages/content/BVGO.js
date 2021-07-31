@@ -15,6 +15,37 @@ class BVGO {
     this.stepsToSkip = 0;
     this.currentWizardStepIndex = 0;
 
+    this.options = Object.assign({}, defaultOptions, options);
+    
+    window.addEventListener('message', e => {
+      switch(e.data.type) {
+        // message posted by the page app code which indicates 
+        // that the wizard instance is added to the window
+        case 'bvgo-app-wizard-ready':
+          this.wizard = window.bvgoWizardManager;
+
+          this.generateWizardSteps();
+          break;
+        case 'bvgo-extension-options-updated':
+          const updatedOptions = e.data.updates;
+
+          // build and setup overlay if page was loaded with enabled option 
+          // set to false and is now being updated to true
+          if(!this.initialized && updatedOptions?.enabled?.newValue) {
+            this.init();
+          }
+          
+          this.setOptions(updatedOptions);
+          break;
+      }
+    });
+
+    if(this.options.enabled) {
+      this.init();
+    }
+  }
+
+  init() {
     this.build();
     this.addListeners();
 
@@ -22,8 +53,8 @@ class BVGO {
     // code expects to receive this event to add the wizard 
     // object on the window.
     window.postMessage({type: 'bvgo-extension-ready'});
-    
-    Object.assign(this, defaultOptions, options);
+
+    this.setOptions(this.options);
 
     this.initialized = true;
   }
@@ -106,21 +137,6 @@ class BVGO {
     });
 
     this.title.addEventListener('click', BVGO.triggerBVGO);
-
-    window.addEventListener('message', e => {
-      switch(e.data.type) {
-        // message posted by the page app code which indicates 
-        // that the wizard instance is added to the window
-        case 'bvgo-app-wizard-ready':
-          this.wizard = window.bvgoWizardManager;
-
-          this.generateWizardSteps();
-          break;
-        case 'bvgo-extension-options-updated':
-          this.setOptions(e.data.updates);
-          break;
-      }
-    });
   }
 
   /**
@@ -333,8 +349,6 @@ class BVGO {
    * Builds all wizard step elements and appends them to the overlay.
    */
   generateWizardSteps() {
-    console.log('Generating wizard steps...');
-
     if(this.wizard?.sections?.length) {
       this.currentWizardStep = this.wizard.getCurrentSection().getCurrentStep();
 

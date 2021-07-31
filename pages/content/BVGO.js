@@ -366,14 +366,20 @@ class BVGO {
         }, [])
         .filter(step => !step.hide);
 
-      this.wizardSteps.forEach(({$modal, duration, title, isLastSectionStep}, index) => {
+      this.wizardSteps.forEach((step, index) => {
         const stepElement = document.createElement('div');
         const titleElement = document.createElement('div');
         const modalElement = document.createElement('div');
+        const {
+          $modal,
+          duration,
+          title,
+          isLastSectionStep
+        } = step;
 
         stepElement.classList.add('bvgo-overlay-wizard-step');
         stepElement.classList.toggle('is-last-section-step', !!isLastSectionStep);
-        stepElement.classList.toggle('active', this.wizardSteps[index] === this.currentWizardStep);
+        stepElement.classList.toggle('active', step === this.currentWizardStep);
         stepElement.setAttribute('data-bvgo-overlay-step-index', index);
         stepElement.setAttribute('data-bvgo-overlay-step-title', title);
         stepElement.title = `Duration: ${duration}`;
@@ -386,6 +392,7 @@ class BVGO {
         titleElement.innerHTML = title;
 
         modalElement.classList.add('bvgo-overlay-wizard-step-modal');
+        modalElement.classList.toggle('active', !!step.isModalDispled);
         modalElement.title = 'Step contains a modal';
 
         stepElement.append(titleElement);

@@ -137,6 +137,39 @@ class BVGO {
     });
 
     this.title.addEventListener('click', BVGO.triggerBVGO);
+
+    let resizeHandlerPending = false;
+
+    window.addEventListener('resize', () => {
+      // debounce resize handler since resize can trigger many events
+      if(!resizeHandlerPending) {
+        setTimeout(() => {
+          this.adjustOutOfBoundsPosition();
+          
+          resizeHandlerPending = false;
+        }, 250);
+
+        resizeHandlerPending = true;
+      }
+    });
+  }
+
+  /**
+   * Checks if container is out of bounds and repositions it to be in view.
+   * This is called on window resize, such as when switching between 
+   * landscape, portrait or different mobile presets and if the 
+   * container has been moved from its initial position
+   */
+  adjustOutOfBoundsPosition() {
+    const containerRect = this.container.getBoundingClientRect();
+    
+    if(containerRect.left > window.innerWidth / 2) {
+      this.container.style.left = '10px';
+    }
+
+    if(containerRect.top > window.innerHeight / 2) {
+      this.container.style.top = '10px';
+    }
   }
 
   /**

@@ -417,17 +417,20 @@ class BVGO {
         const titleElement = document.createElement('div');
         const modalElement = document.createElement('div');
         const {
+          $elem,
           $modal,
           duration,
           title,
           isLastSectionStep
         } = step;
 
+        const stepTitle = title || $elem.attr('id');
+
         stepElement.classList.add('bvgo-overlay-wizard-step');
         stepElement.classList.toggle('is-last-section-step', !!isLastSectionStep);
         stepElement.classList.toggle('active', step === this.currentWizardStep);
         stepElement.setAttribute('data-bvgo-overlay-step-index', index);
-        stepElement.setAttribute('data-bvgo-overlay-step-title', title);
+        stepElement.setAttribute('data-bvgo-overlay-step-title', stepTitle);
         stepElement.title = `Duration: ${duration}`;
 
         stepElement.addEventListener('click', e => {
@@ -435,7 +438,7 @@ class BVGO {
         });
 
         titleElement.classList.add('bvgo-overlay-wizard-step-title');
-        titleElement.innerHTML = title;
+        titleElement.innerHTML = stepTitle;
 
         modalElement.classList.add('bvgo-overlay-wizard-step-modal');
         modalElement.classList.toggle('active', !!step.isModalDispled);

@@ -126,7 +126,7 @@ class BVGO {
       this.container.addEventListener('mouseout', () => this.container.classList.add('inactive'));
     }
 
-    this.attachMouseOrTouchListener(this.titlebar, 'add', 'mousedown', this.onDragMouseDownHandler);
+    this.attachMouseAndTouchListeners(this.titlebar, 'add', 'mousedown', this.onDragMouseDownHandler);
 
     this.containerToggleBtn.addEventListener('click', this.toggleContainer);
 
@@ -173,7 +173,7 @@ class BVGO {
   }
 
   /**
-   * Switches mouse events to comparable touch events if touch events are on the window
+   * Adds both mouse and equivalent touch event listeners
    * 
    * @param {Node} elem 
    * @param {string} addOrRemove 
@@ -181,18 +181,15 @@ class BVGO {
    * @param {Function} handler 
    * @param {string|object} options 
    */
-   attachMouseOrTouchListener(elem, addOrRemove, eventType, handler, options) {
+   attachMouseAndTouchListeners(elem, addOrRemove, eventType, handler, options) {
     const eventTypeMapping = {
       mouseup: 'touchend',
       mousemove: 'touchmove',
       mousedown: 'touchstart',
     };
 
-    if('ontouchstart' in window) {
-      eventType = eventTypeMapping[eventType];
-    }
-
     elem[`${addOrRemove}EventListener`](eventType, handler, options);
+    elem[`${addOrRemove}EventListener`](eventTypeMapping[eventType], handler, options);
   }
 
   /**
@@ -221,8 +218,8 @@ class BVGO {
     this.dragStartOffsetLeft = this.container.offsetLeft;
     this.dragStartOffsetTop = this.container.offsetTop;
 
-    this.attachMouseOrTouchListener(document, 'add', 'mousemove', this.onDragMouseMoveHandler, { passive: false });
-    this.attachMouseOrTouchListener(document, 'add', 'mouseup', this.onDragMouseUpHandler);
+    this.attachMouseAndTouchListeners(document, 'add', 'mousemove', this.onDragMouseMoveHandler, { passive: false });
+    this.attachMouseAndTouchListeners(document, 'add', 'mouseup', this.onDragMouseUpHandler);
   }
 
   /**
@@ -245,8 +242,8 @@ class BVGO {
    * Mouse up or touch end event handler to remove drag events when dragging is complete
    */
   onDragMouseUpHandler() {
-    this.attachMouseOrTouchListener(document, 'remove', 'mousemove', this.onDragMouseMoveHandler);
-    this.attachMouseOrTouchListener(document, 'remove', 'mouseup', this.onDragMouseUpHandler);
+    this.attachMouseAndTouchListeners(document, 'remove', 'mousemove', this.onDragMouseMoveHandler);
+    this.attachMouseAndTouchListeners(document, 'remove', 'mouseup', this.onDragMouseUpHandler);
   }
 
   /**

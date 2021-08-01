@@ -163,11 +163,11 @@ class BVGO {
   adjustOutOfBoundsPosition() {
     const containerRect = this.container.getBoundingClientRect();
     
-    if(containerRect.left > window.innerWidth / 2) {
+    if(containerRect.left > window.innerWidth - containerRect.width) {
       this.container.style.left = '10px';
     }
 
-    if(containerRect.top > window.innerHeight / 2) {
+    if(containerRect.top > window.innerHeight - containerRect.height) {
       this.container.style.top = '10px';
     }
   }
@@ -382,6 +382,11 @@ class BVGO {
     if(this.wizard?.sections?.length) {
       this.currentWizardStep = this.wizard.getCurrentSection().getCurrentStep();
 
+      // switch from container being just the bvgo button
+      // now that the wizard steps are being generated
+      this.container.classList.remove('only-bvgo');
+      this.containerToggleBtn.classList.remove('hidden');
+
       // flatten wizard steps
       this.wizardSteps = this.wizard.sections
         .reduce((acc, section) => {
@@ -469,7 +474,10 @@ class BVGO {
     this.container = document.createElement('div');
     this.container.classList.add('bvgo-overlay-container');
 
-    this.container.classList.add('expanded');
+    // initially display the container as only a bvgo button in case page
+    // isn't coded to interact with the extension. if wizard steps are
+    // generated, container and toggle button classes are updated
+    this.container.classList.add('expanded', 'only-bvgo');
     this.container.classList.toggle('inactive', !!this.containerMouseFades);
 
     this.titlebar = document.createElement('div');
@@ -481,7 +489,8 @@ class BVGO {
     this.title.innerHTML = 'BVGO';
 
     this.containerToggleBtn = document.createElement('span');
-    this.containerToggleBtn.classList.add('bvgo-overlay-toggle-btn', 'bvgo-icon-minus');
+    // button is hidden until wizard steps are generated
+    this.containerToggleBtn.classList.add('bvgo-overlay-toggle-btn', 'bvgo-icon-minus', 'hidden');
     this.containerToggleBtn.setAttribute('role', 'button');
     this.containerToggleBtn.setAttribute('title', 'Click to collapse');
 

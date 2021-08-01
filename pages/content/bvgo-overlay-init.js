@@ -24,6 +24,7 @@ chrome.storage.onChanged.addListener(updates => {
         window.postMessage({
           type: 'bvgo-extension-options',
           options,
+          extensionID: chrome.runtime.id,
         });
       });
     }

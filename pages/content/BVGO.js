@@ -11,10 +11,10 @@ class BVGO {
     });
   }
 
-  constructor(options) {
+  constructor(options, extensionID) {
     this.stepsToSkip = 0;
     this.currentWizardStepIndex = 0;
-
+    this.extensionID = extensionID;
     this.options = Object.assign({}, defaultOptions, options);
     
     window.addEventListener('message', e => {
@@ -417,12 +417,18 @@ class BVGO {
   collapse() {
     this.container.classList.remove('expanded');
     this.container.classList.add('collapsed');
+    this.containerToggleBtn.classList.add('bvgo-icon-plus');
+    this.containerToggleBtn.classList.remove('bvgo-icon-minus');
+    this.containerToggleBtn.title = 'Click to expand';
     this.isCollapsed = true;
   }
 
   expand() {
     this.container.classList.remove('collapsed');
     this.container.classList.add('expanded');
+    this.containerToggleBtn.classList.remove('bvgo-icon-plus');
+    this.containerToggleBtn.classList.add('bvgo-icon-minus');
+    this.containerToggleBtn.title = 'Click to collapse';
     this.isCollapsed = false;
   }
 
@@ -445,9 +451,9 @@ class BVGO {
     this.title.innerHTML = 'BVGO';
 
     this.containerToggleBtn = document.createElement('span');
-    this.containerToggleBtn.classList.add('bvgo-overlay-toggle-btn');
+    this.containerToggleBtn.classList.add('bvgo-overlay-toggle-btn', 'bvgo-icon-minus');
     this.containerToggleBtn.setAttribute('role', 'button');
-    this.containerToggleBtn.setAttribute('title', 'Click to collapse BVGO window');
+    this.containerToggleBtn.setAttribute('title', 'Click to collapse');
 
     this.titlebar.append(this.title, this.containerToggleBtn);
 

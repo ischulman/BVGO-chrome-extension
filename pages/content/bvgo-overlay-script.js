@@ -5,11 +5,12 @@ window.addEventListener('message', e => {
   const {
     type,
     options,
+    extensionID,
   } = e.data;
 
   if(type === 'bvgo-extension-options') {
     if(bvgoLoaded && BVGO.isBRP()) {
-      BVGOOverlay = new BVGO(options);
+      BVGOOverlay = new BVGO(options, extensionID);
     }
   }
 

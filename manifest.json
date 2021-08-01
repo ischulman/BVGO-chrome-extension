@@ -44,7 +44,8 @@
       "resources": [
         "default-options.js",
         "pages/content/BVGO.js",
-        "pages/content/bvgo-overlay-script.js"
+        "pages/content/bvgo-overlay-script.js",
+        "font/icomoon.woff"
       ],
       "matches": [
         "http://localhost/*",

@@ -10,6 +10,32 @@
   --bvgo-ext-color-muted: #a6b6b1;
 }
 
+@font-face {
+  font-family: 'icomoon';
+  src: url('chrome-extension://__MSG_@@extension_id__/font/icomoon.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class*="bvgo-icon-"] {
+  font-family: 'icomoon' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+.bvgo-icon-minus:before {
+  content: "\e900";
+}
+.bvgo-icon-plus:before {
+  content: "\e901";
+}
+
 .bvgo-overlay-container,
 .bvgo-overlay-container * {
   box-sizing: border-box;
@@ -57,7 +83,8 @@
   cursor: pointer;
 }
 
-.bvgo-overlay-title:hover {
+.bvgo-overlay-title:hover,
+.bvgo-overlay-toggle-btn:hover {
   color: var(--bvgo-ext-color-bright);
 }
 
@@ -67,32 +94,16 @@
 
 .bvgo-overlay-toggle-btn {
   display: flex;
-  place-items: center;
+  align-items: center;
+  justify-content: center;
   width: 18px;
   height: 18px;
-}
+  font-size: 20px;
+  font-weight: bold;
+} 
 
 .bvgo-overlay-container.collapsed {
   height: 35px;
-}
-
-.bvgo-overlay-container.expanded .bvgo-overlay-toggle-btn:before {
-  content: '\02212';
-}
-
-.bvgo-overlay-container.collapsed .bvgo-overlay-toggle-btn:before {
-  content: '\0002B';
-}
-
-.bvgo-overlay-btn {
-  display: inline-block;
-  padding: 5px;
-  user-select: none;
-
-  border: 1px solid var(--bvgo-ext-border-color);
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
 }
 
 .bvgo-overlay-wizard-step {

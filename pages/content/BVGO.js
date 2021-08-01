@@ -229,11 +229,22 @@ class BVGO {
    */
   onDragMouseMoveHandler(e) {
     const { clientX, clientY } = this.getEventXYPosition(e);
-    const x = clientX - this.dragStartX;
-    const y = clientY - this.dragStartY;
-    
-    this.container.style.left = (this.dragStartOffsetLeft + x) + 'px';
-    this.container.style.top = (this.dragStartOffsetTop + y) + 'px';
+    const containerRightBoundary = this.container.offsetWidth * .25;
+    const containerLeftBoundary = -(this.container.offsetWidth * .75);
+    const containerTopBoundary = this.container.offsetHeight * .25;
+    const maxLeft = window.innerWidth - containerRightBoundary
+    const maxTop = window.innerHeight - containerTopBoundary;
+    let left = this.dragStartOffsetLeft + (clientX - this.dragStartX);
+    let top = this.dragStartOffsetTop + (clientY - this.dragStartY);
+
+    // ensure container isn't dragged too far out of bounds
+    if(left > maxLeft) left = maxLeft;
+    if(top > maxTop) top = maxTop;
+    if(left < containerLeftBoundary) left = containerLeftBoundary;
+    if(top < 0) top = 0; 
+
+    this.container.style.left = left + 'px';
+    this.container.style.top = top + 'px';
 
     e.preventDefault();
   }

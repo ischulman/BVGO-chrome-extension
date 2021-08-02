@@ -339,15 +339,16 @@ class BVGO {
     if(!currentStep.hide) {
       console.log(currentStep.title, currentStep);
 
+      const stepTitle = currentStep.title || currentStep.$elem.attr('id');
       const bvgoTitleDataset = 'data-bvgo-overlay-step-title';
       const bvgoStepClass = '.bvgo-overlay-wizard-step';
       const bvgoModalClass = '.bvgo-overlay-wizard-step-modal';
-      const bvgoStepElement = document.querySelector(`[${bvgoTitleDataset}="${currentStep.title}"]`);
+      const bvgoStepElement = document.querySelector(`[${bvgoTitleDataset}="${stepTitle}"]`);
       const bvgoActiveStepElement = document.querySelector(`${bvgoStepClass}.active`);
       const bvgoActiveStepModalElement = document.querySelector(`${bvgoModalClass}.active`);
 
       const onModalShown = () => {
-        document.querySelector(`[${bvgoTitleDataset}="${currentStep.title}"] ${bvgoModalClass}`)?.classList.add('active');
+        document.querySelector(`[${bvgoTitleDataset}="${stepTitle}"] ${bvgoModalClass}`)?.classList.add('active');
 
         currentStep.$modal.off('show.bs.modal', onModalShown);
 
